@@ -29,9 +29,8 @@ class WTemplateParser {
 		$length = strlen($string);
 		$level = 0;
 		$code = ""; // $code stocks the entire code compiled
-		$tmp = ""; // $tmp stocks the node currently being read
+		$tmp_array = array(0 => ''); // $tmp_array stocks the node (and sub-nodes) currently being read
 		$last_char = '';
-		$return = null;
 		$comment = false;
 		
 		if (!is_callable($callback)) {
@@ -73,13 +72,13 @@ class WTemplateParser {
 						// List of authorized chars to start a node (alphanum, / for closing nodes and $ for var displaying nodes
 						if ($i < $length-1 && preg_match('#[a-zA-Z0-9/$%]#', $string[$i+1]) && $last_char != '\\') {
 							$level++;
+							// Create a new level in the temporary array
+							$tmp_array[$level] = '';
 						}
 						
 						// Are we in a node?
 						if ($level > 0) {
-							if ($level > 1) {
-								$tmp .= '{';
-							}
+							$tmp_array[$level] .= '{';
 						} else {
 							$code .= '{';
 						}
@@ -89,28 +88,31 @@ class WTemplateParser {
 				case '}':
 					if ($level > 0) {
 						if (!$comment) {
-							if ($level > 1) {
-								$tmp .= '}';
-							}
+							// Add the closing bracket
+							$tmp_array[$level] .= '}';
 							
 							// Check whether } is backslashed
 							if ($last_char != '\\') {
 								$level--;
+								
+								// Immediately compile superior level
+								$tmp_array[$level] .= call_user_func($callback, $tmp_array[$level+1], $level > 0);
+								
+								// Delete superior level
+								unset($tmp_array[$level+1]);
 							}
 							
-							// We arrived at the end of the node => compile it
+							// We arrived at the end of the node
 							if ($level == 0) {
-								if (!empty($tmp)) {
-									$code .= call_user_func($callback, $tmp);
-									$tmp = "";
-								} else {
-									$code .= '{}';
-								}
+								// Add the compile node to the global string $code
+								$code .= $tmp_array[0];
+								// Clean temporary array
+								$tmp_array = array(0 => '');
 							}
 						} else if ($last_char == '%') {
 							$comment = false;
 							$level--;
-							$tmp = "";
+							$tmp_array = array(0 => '');
 						}
 					} else {
 						$code .= '}';
@@ -126,11 +128,11 @@ class WTemplateParser {
 						// We are in a node. Special chars may be used
 						// so add them back
 						if ($last_char == '\\') {
-							$tmp .= '\\';
+							$tmp_array[$level] .= '\\';
 						} else if ($last_char == '%') {
-							$tmp .= '%';
+							$tmp_array[$level] .= '%';
 						}
-						$tmp .= $char;
+						$tmp_array[$level] .= $char;
 					} else {
 						if ($last_char == '\\') {
 							$code .= '\\';

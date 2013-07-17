@@ -96,8 +96,8 @@ class WTemplateCompiler {
 	 * @return string the compiled node
 	 * @throws Exception
 	 */
-	public function compileNode($node) {
-		$node = trim($node);
+	public function compileNode($node, $inner_node = false) {
+		$node = trim($node, ' {}');
 		if (empty($node)) {
 			return "";
 		}
@@ -105,7 +105,11 @@ class WTemplateCompiler {
 		
 		// Variable display
 		if (strpos($node, '$') === 0) {
-			$output = $this->compile_var($node);
+			if ($inner_node) {
+				$output = $this->parseVar($node);
+			} else {
+				$output = $this->compile_var($node);
+			}
 		}
 		// Closing tag
 		else if (strpos($node, '/') === 0) {
