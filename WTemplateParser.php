@@ -72,15 +72,16 @@ class WTemplateParser {
 						// List of authorized chars to start a node (alphanum, / for closing nodes and $ for var displaying nodes
 						if ($i < $length-1 && preg_match('#[a-zA-Z0-9/$%]#', $string[$i+1]) && $last_char != '\\') {
 							$level++;
+							
 							// Create a new level in the temporary array
 							$tmp_array[$level] = '';
-						}
-						
-						// Are we in a node?
-						if ($level > 0) {
-							$tmp_array[$level] .= '{';
 						} else {
-							$code .= '{';
+							// Are we in a node?
+							if ($level > 0) {
+								$tmp_array[$level] .= '{';
+							} else {
+								$code .= '{';
+							}
 						}
 					}
 					break;
@@ -88,9 +89,6 @@ class WTemplateParser {
 				case '}':
 					if ($level > 0) {
 						if (!$comment) {
-							// Add the closing bracket
-							$tmp_array[$level] .= '}';
-							
 							// Check whether } is backslashed
 							if ($last_char != '\\') {
 								$level--;
@@ -100,6 +98,9 @@ class WTemplateParser {
 								
 								// Delete superior level
 								unset($tmp_array[$level+1]);
+							} else {
+								// Add the closing bracket
+								$tmp_array[$level] .= '}';
 							}
 							
 							// We arrived at the end of the node
@@ -121,7 +122,7 @@ class WTemplateParser {
 				
 				default:
 					if ($char == "\n" && $level > 0 && !$comment) {
-						throw new Exception("WTemplateParser::replaceNodes(): found illegal carriage return character in a node (".$tmp.").");
+						throw new Exception("WTemplateParser::replaceNodes(): found illegal carriage return character in a node (".$tmp_array[$level].").");
 					}
 					
 					if ($level > 0) {

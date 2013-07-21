@@ -83,7 +83,7 @@ class WTemplateCompiler {
 		
 		$this->data = array();
 		
-		// Replace xml tag to prevent short open tag conflict
+		// Replace XML tag to prevent short open tag conflict
 		$code = str_replace("<?xml", "<?php echo '<?xml'; ?>", $code);
 		
 		return $code;
@@ -92,12 +92,13 @@ class WTemplateCompiler {
 	/**
 	 * Compiles a single node
 	 * 
-	 * @param string $node a node that will be compiled
+	 * @param string $original_node  Node that will be compiled without wrapping brackets {}
+	 * @param bool   $inner_node     Boolean to know if it is an inner-node being compiled
 	 * @return string the compiled node
 	 * @throws Exception
 	 */
-	public function compileNode($node, $inner_node = false) {
-		$node = trim($node, ' {}');
+	public function compileNode($original_node, $inner_node = false) {
+		$node = trim($original_node);
 		if (empty($node)) {
 			return "";
 		}
@@ -106,7 +107,8 @@ class WTemplateCompiler {
 		// Variable display
 		if (strpos($node, '$') === 0) {
 			if ($inner_node) {
-				$output = $this->parseVar($node);
+				// Inner variables will be treated by compilers
+				$output = '{'.$original_node.'}';
 			} else {
 				$output = $this->compile_var($node);
 			}
@@ -180,23 +182,27 @@ class WTemplateCompiler {
 	 */
 	public static function parseVar($string) {
 		if (strpos($string, '$') !== 0) {
-			return;
+			return '';
+		} else if (strpos($string, '$this->') === 0) {
+			return $string;
 		}
 		
 		// Remove begining '$' char
 		$string = substr($string, 1);
 		
+		// Replace nested variables
 		if (strpos($string, '{') !== false) {
 			$string = self::replaceVars($string);
 		}
 		
+		// Get function list
 		$functions = explode('|', $string);
 		
 		$var_string = array_shift($functions);
 		
 		$return = '$this->tpl_vars';
-		// sub arrays
-		foreach (explode('.', $var_string) as $s) {
+		$levels = explode('.', $var_string);
+		foreach ($levels as $s) {
 			$s = trim($s);
 			if (strpos($s, '$') === 0 || strpos($s, '(') !== false) {
 				$return .= '['.$s.']';
@@ -205,11 +211,12 @@ class WTemplateCompiler {
 			}
 		}
 		
-		// functions to apply
+		// Functions to apply on the variable
 		foreach ($functions as $f) {
 			$f = trim($f);
 			switch ($f) {
-				// Add personnal fonctions here case 'perso': ...
+				// Add custom functions here:
+				// case 'custom': break;
 				
 				default:
 					if (function_exists($f)) {
@@ -244,11 +251,10 @@ class WTemplateCompiler {
 	 */
 	public function compile_var($args) {
 		if (!empty($args)) {
-			$var = $this->parseVar($args);
-			return '<?php echo '.$var.'; ?>';
-		} else {
-			return '';
+			return '<?php echo '.$this->parseVar($args).'; ?>';
 		}
+		
+		return '';
 	}
 	
 	/**
@@ -268,7 +274,6 @@ class WTemplateCompiler {
 		// {$var} are replaced by ".{$var}." so that they can concat with other strings
 		$file = str_replace(array('"', "'"), '', $file);
 		$file = str_replace(array('{', '}'), array('".{', '}."'), $file);
-		$file = $this->replaceVars($file);
 		
 		if (!empty($this->data['dir'])) {
 			$file = str_replace('./', $this->data['dir'].'/', $file);
@@ -285,10 +290,8 @@ class WTemplateCompiler {
 	 * @return string the php-if code
 	 */
 	public function compile_if($args) {
-		$cond = trim($args);
-		
-		// Traitement des variables de la condition
-		$cond = $this->replaceVars($cond);
+		// Replace variables in condition
+		$cond = $this->replaceVars(trim($args));
 		
 		return '<?php if ('.$cond.'): ?>';
 	}
@@ -344,9 +347,12 @@ class WTemplateCompiler {
 		}
 		$this->for_count++;
 		list(,, $key, $value, $array) = $matches;
-		$array = trim($array, ' {}');
-		if ($array[0] == '$') {
+		
+		$array = trim($array);
+		if (strlen($array) > 0 && $array[0] == '$') {
 			$array = $this->parseVar($array);
+		} else {
+			$array = $this->replaceVars($array);
 		}
 		
 		$s = "<?php \$hidden_counter".$this->for_count." = 0;\n";
@@ -390,27 +396,30 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Compiles an assignement
+	 * Compiles an assignment
 	 * 
 	 * <code>{set $a = 5}
 	 * {set {$a} = {$a} + 1}</code>
 	 * 
-	 * @param string $args an assignement <code>var=value</code>
-	 * @return string the php-assignement code
+	 * @param string $args an assignment <code>var=value</code>
+	 * @return string the php-assignment code
 	 */
 	public function compile_set($args) {
 		$a = explode('=', $args);
-		if (count($a) != 2) {
-			return '';
+		if (count($a) == 2) {
+			list($var, $value) = $a;
+			
+			if ($var[0] == '$') {
+				$var = $this->parseVar(trim($var));
+			} else {
+				$var = $this->replaceVars(trim($var));
+			}
+			$value = $this->replaceVars(trim($value));
+			
+			return "<?php ".$var." = ".$value."; ?>";
 		}
-		list($var, $value) = $a;
-		$var = trim($var, '{}');
-		if ($var[0] != '$') {
-			return '';
-		}
-		$var = $this->parseVar(trim($var));
-		$value = $this->replaceVars(trim($value));
-		return "<?php ".$var." = ".$value."; ?>";
+		
+		return '';
 	}
 }
 
