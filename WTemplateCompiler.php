@@ -276,8 +276,9 @@ class WTemplateCompiler {
 		$file = str_replace(array('{', '}'), array('".{', '}."'), $file);
 		
 		if (!empty($this->data['dir'])) {
-			$file = str_replace('./', $this->data['dir'].'/', $file);
-			$file = str_replace('../', dirname($this->data['dir']).'/', $file);
+			$dir = str_replace('\\', '/', $this->data['dir']);
+			$file = str_replace('./', $dir.'/', $file);
+			$file = str_replace('../', dirname($dir).'/', $file);
 		}
 		
 		return '<?php $this->display("'.$file.'"); ?>';
