@@ -406,9 +406,10 @@ class WTemplateCompiler {
 	 * @return string the php-assignment code
 	 */
 	public function compile_set($args) {
-		$a = explode('=', $args);
-		if (count($a) == 2) {
-			list($var, $value) = $a;
+		$first_equal_pos = strpos($args, '=');
+		if ($first_equal_pos !== false) {
+			$var = trim(substr($args, 0, $first_equal_pos));
+			$value = trim(substr($args, $first_equal_pos+1));
 			
 			if ($var[0] == '$') {
 				$var = $this->parseVar(trim($var));
