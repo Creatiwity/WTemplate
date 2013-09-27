@@ -6,7 +6,7 @@
 defined('IN_WITY') or die('Access denied');
 
 /**
- * WTemplateCompiler compiles the nodes used in templates parsed by WTemplate
+ * WTemplateCompiler compiles the nodes used in templates parsed by WTemplate.
  * 
  * It replaces a node by its PHP equivalent.
  * WTemplateCompiler is composed by several handlers, one for each node known by WTemplate.
@@ -17,11 +17,10 @@ defined('IN_WITY') or die('Access denied');
  * For a closing node, such as <code>{/exemple}</code>, the node name is "exemple_close".
  *
  * @package System\WTemplate
- * @author Johan Dufau <johandufau@gmail.com>
- * @version 0.3-22-11-2012
+ * @author Johan Dufau <johan.dufau@creatiwity.net>
+ * @version 0.4.0-22-11-2012
  */
 class WTemplateCompiler {
-	
 	/**
 	 * @var array List of nodes opened to check whether they are properly closed
 	 */

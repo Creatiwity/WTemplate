@@ -6,14 +6,13 @@
 defined('IN_WITY') or die('Access denied');
 
 /**
- * WTemplateParser is the parser part of WTemplate
+ * WTemplateParser is the parser part of WTemplate.
  *
  * @package System\WTemplate
- * @author Johan Dufau <johandufau@gmail.com>
- * @version 0.3-22-11-2012
+ * @author Johan Dufau <johan.dufau@creatiwity.net>
+ * @version 0.4.0-22-11-2012
  */
 class WTemplateParser {
-	
 	/**
 	 * Replaces all nodes found in $string by the callback result
 	 * 

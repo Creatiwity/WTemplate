@@ -5,19 +5,18 @@
 
 defined('IN_WITY') or die('Access denied');
 
-include dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateFile.php';
-include dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateParser.php';
-include dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateCompiler.php';
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateFile.php';
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateParser.php';
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateCompiler.php';
 
 /**
- * WTemplate is the template engine used by WityCMS
+ * WTemplate is the template engine used by WityCMS.
  * 
  * @package System\WTemplate
- * @author Johan Dufau <johandufau@gmail.com>
- * @version 0.3-26-10-2012
+ * @author Johan Dufau <johan.dufau@creatiwity.net>
+ * @version 0.4.0-26-10-2012
  */
 class WTemplate {
-
 	/**
 	 * @var string Compilation directory: where to place compiled files
 	 */

@@ -6,14 +6,13 @@
 defined('IN_WITY') or die('Access denied');
 
 /**
- * WTemplateFile
+ * WTemplateFile is the template file manager.
  *
  * @package System\WTemplate
- * @author Johan Dufau <johandufau@gmail.com>
- * @version 0.3-04-08-2012
+ * @author Johan Dufau <johan.dufau@creatiwity.net>
+ * @version 0.4.0-04-08-2012
  */
 class WTemplateFile {
-
 	/**
 	 * @var string Complete file href
 	 */
