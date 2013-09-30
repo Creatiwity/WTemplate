@@ -61,8 +61,8 @@ class WTemplate {
 	/**
 	 * Sets the compile directory
 	 * 
-	 * @param string $compileDir the compile directory
-	 * @throws Exception
+	 * @param string $compileDir Compile directory
+	 * @return bool Returns true if the compile directory was sucessfully setup.
 	 */
 	public function setCompileDir($compileDir) {
 		if (is_dir($compileDir)) {
@@ -71,10 +71,20 @@ class WTemplate {
 			// Attempt to create compile directory
 			if (@mkdir($compileDir, 0777)) {
 				$this->compileDir = $compileDir;
+				return true;
 			} else {
-				throw new Exception("WTemplate::setCompileDir(): Impossible to create cache directory in ".$compileDir.".");
+				return false;
 			}
 		}
+	}
+	
+	/**
+	 * Returns the compile directory used by WTemplate.
+	 * 
+	 * @return string The compile directory
+	 */
+	public function getCompileDir() {
+		return $this->compileDir;
 	}
 	
 	/**
