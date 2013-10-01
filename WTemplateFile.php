@@ -160,7 +160,7 @@ class WTemplateFile {
 	 */
 	private function saveFile($data) {
 		if (is_writable($this->compilationDir)) {
-			$handle = fopen($this->compilationHref, 'w');
+			$handle = @fopen($this->compilationHref, 'w');
 			if (!$handle) {
 				throw new Exception("WTemplateFile::saveFile(): Unable to open cache file \"".$this->compilationHref."\".");
 			}
