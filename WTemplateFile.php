@@ -67,7 +67,7 @@ class WTemplateFile {
 	}
 	
 	/**
-	 * Creates the position of the cached file compiled
+	 * Creates the position of the cached file compiled.
 	 * 
 	 * @return string href of the cached file
 	 */
@@ -78,7 +78,7 @@ class WTemplateFile {
 	}
 	
 	/**
-	 * Returns the href of the cached file
+	 * Returns the href of the cached file.
 	 * 
 	 * @return string href to the cached file
 	 */
@@ -87,16 +87,16 @@ class WTemplateFile {
 	}
 	
 	/**
-	 * Returns the compilation time
+	 * Returns the compilation time.
 	 * 
-	 * @return int compilation time
+	 * @return int Time ellapsed to compile the file
 	 */
 	public function getCompilationTime() {
 		return $this->compilationTime;
 	}
 	
 	/**
-	 * Checks if there is a valid compiled file
+	 * Checks whether this file needs to be compiled.
 	 * 
 	 * @return boolean true if compilation is NOT required, false otherwise
 	 */
@@ -120,9 +120,9 @@ class WTemplateFile {
 	}
 	
 	/**
-	 * Compiles this file
+	 * Compiles this file.
 	 * 
-	 * @param WTemplateCompiler $compiler This object is a compiler which will compile each nodes
+	 * @param WTemplateCompiler $compiler The compiler to compile each node
 	 * @return Output compiled code
 	 * @throws Exception
 	 */
@@ -151,9 +151,9 @@ class WTemplateFile {
 	}
 	
 	/**
-	 * Writes output string into the cache file
+	 * Writes output string into the cache file.
 	 * 
-	 * @param string $data the output string
+	 * @param string $data The output string
 	 * @throws Exception
 	 */
 	private function saveFile($data) {

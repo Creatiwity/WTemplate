@@ -16,22 +16,22 @@ require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateCompiler.php';
  */
 class WTemplate {
 	/**
-	 * @var string Compilation directory: where to place compiled files
+	 * @var string Compilation directory: the location to store compiled files.
 	 */
 	private $compileDir;
 	
 	/**
-	 * @var array Template variables
+	 * @var array Template variables.
 	 */
 	private $tpl_vars = array();
 	
 	/**
-	 * @var Set of variables contexts
+	 * @var array Set of variables contexts.
 	 */
 	public $context = array();
 	
 	/**
-	 * @var WTemplateCompiler Template compilator
+	 * @var WTemplateCompiler Templates compiler.
 	 */
 	private $compiler;
 	

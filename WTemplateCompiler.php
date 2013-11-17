@@ -6,36 +6,36 @@
 /**
  * WTemplateCompiler compiles the nodes used in templates parsed by WTemplate.
  * 
- * It replaces a node by its PHP equivalent.
- * WTemplateCompiler is composed by several handlers, one for each node known by WTemplate.
+ * <p>It replaces a node by its PHP equivalent. To do so, it is composed by several handlers, 
+ * one for each known node by WTemplate.</p>
  * 
- * What is a node?
- * Each <code>{exemple}</code> is called a "node".
- * In this case, "exemple" is the name of the node.
- * For a closing node, such as <code>{/exemple}</code>, the node name is "exemple_close".
- *
+ * <p><strong>What is a node?</strong><br />
+ * Each <code>{exemple}</code> is called a "node". In this case, "exemple" is the name of the node.</p>
+ * 
+ * <p>For a closing node, such as <code>{/exemple}</code>, the node name is "exemple_close".</p>
+ * 
  * @package WTemplate
  * @author Johan Dufau <johan.dufau@creatiwity.net>
  * @version 0.4.0-22-11-2012
  */
 class WTemplateCompiler {
 	/**
-	 * @var array List of nodes opened to check whether they are properly closed
+	 * @var array List of nodes opened to check whether they are properly closed.
 	 */
 	private $openNodes = array();
 	
 	/**
-	 * @var array Some useful information to help the compilation (such as file src, template directory, ...)
+	 * @var array Some useful information to help the compilation (such as file src, template directory, ...).
 	 */
 	private $data = array();
 	
 	/**
-	 * @var array List of all registered external compilers  
+	 * @var array List of all registered external compilers  .
 	 */
 	private static $external_compilers = array();
 	
 	/**
-	 * Registers an external compiler
+	 * Registers an external compiler.
 	 * 
 	 * An external compiler is a node handler which belongs to an external class than WTemplateCompiler.
 	 * It may be called by WTemplateCompiler whenever the node is found.
@@ -62,9 +62,9 @@ class WTemplateCompiler {
 	 * Compiles an entire string containing nodes.
 	 * This method is called when WTemplate is asked to parse a file.
 	 * 
-	 * @param string    $string the string that will be compiled
-	 * @param array     $data   datas that will be used in the compiled file
-	 * @return string the compiled file
+	 * @param string    $string The string that will be compiled
+	 * @param array     $data   Some extra data to use in compilation handlers (such as file's href)
+	 * @return string The compiled file
 	 * @throws Exception
 	 */
 	public function compileString($string, array $data = array()) {
@@ -87,11 +87,11 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Compiles a single node
+	 * Compiles a single node.
 	 * 
 	 * @param string $original_node  Node that will be compiled without wrapping brackets {}
 	 * @param bool   $inner_node     Boolean to know if it is an inner-node being compiled
-	 * @return string the compiled node
+	 * @return string The compiled node
 	 * @throws Exception
 	 */
 	public function compileNode($original_node, $inner_node = false) {
@@ -169,13 +169,13 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Parses a variable node into PHP code
-	 * Vars have this format: {$var.index1.index2...|function1|function2...}
+	 * Parses a variable node into PHP code.
+	 * Vars should have this format: {$var.index1.index2...|function1|function2...}
 	 * 
-	 * Nesting vars are managed such as: {$var1.{$var2.x}}
+	 * Nesting vars can be used, such as: {$var1.{$var2.x}}
 	 * 
-	 * @param string $string a string that will be compiled
-	 * @return string the compiled string
+	 * @param string $string A string that will be compiled
+	 * @return string The compiled string
 	 */
 	public static function parseVar($string) {
 		if (strpos($string, '$') !== 0) {
@@ -227,24 +227,24 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Replaces all variable nodes in a given string by their PHP values
-	 * For each node, it calls WTemplateCompiler::parseVar()
+	 * Replaces all variable nodes in a given string by their PHP values.
+	 * For each node, it calls WTemplateCompiler::parseVar().
 	 * 
 	 * @see WTemplateParser::replaceNodes()
-	 * @param string $string a string in which variable names will be replaced by their values
-	 * @return string a string with values instead of variable names
+	 * @param string $string A string in which variable names will be replaced by their values
+	 * @return string Compiled string with PHP's variables
 	 */
 	public static function replaceVars($string) {
 		return WTemplateParser::replaceNodes($string, array('WTemplateCompiler', 'parseVar'));
 	}
 	
 	/**
-	 * Compiles a variable displaying it
+	 * Compiles a variable displaying it.
 	 * 
 	 * <code>{$array.index1.index2...|func1|func2...}</code>
 	 * 
-	 * @param string $args a string of variables that will be compiled
-	 * @return string the compiled variables
+	 * @param string $args A string of variables that will be compiled
+	 * @return string The compiled variables
 	 */
 	public function compile_var($args) {
 		if (!empty($args)) {
@@ -255,13 +255,12 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Compiles {include} node to include sub template files
+	 * Compiles {include} node to include sub template files.
 	 * 
 	 * <code>{include file_href}</code>
 	 * 
-	 * @todo Add a recursive compiler to be able to include multiple application in one page
-	 * @param string $file the file to include
-	 * @return string the php code displying the compiled file (only variables are compiled)
+	 * @param string $file The file to include
+	 * @return string The php code displying the compiled file (only variables are compiled)
 	 */
 	public function compile_include($file) {
 		if (empty($file)) {
@@ -282,10 +281,10 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Compiles {if condition}
+	 * Compiles {if condition}.
 	 * 
-	 * @param string $args if arguments
-	 * @return string the php-if code
+	 * @param string $args Arguments within the {if} node
+	 * @return string The compiled code
 	 */
 	public function compile_if($args) {
 		// Replace variables in condition
@@ -295,28 +294,28 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Compiles {else}
+	 * Compiles {else}.
 	 * 
-	 * @return string the php-else code
+	 * @return string The compiled code
 	 */
 	public function compile_else() {
 		return '<?php else: ?>';
 	}
 	
 	/**
-	 * Compiles {elseif ...}
+	 * Compiles {elseif ...}.
 	 * 
-	 * @param string $args elseif arguments
-	 * @return type the php-elseif code
+	 * @param string $args Arguments within the {elseif} node
+	 * @return string The compiled code
 	 */
 	public function compile_elseif($args) {
 		return str_replace('if', 'elseif', $this->compile_if($args));
 	}
 	
 	/**
-	 * Compiles {/if}
+	 * Compiles {/if}.
 	 * 
-	 * @return string the php-endif code
+	 * @return string The compiled code
 	 */
 	public function compile_if_close() {
 		return '<?php endif; ?>';
@@ -328,10 +327,10 @@ class WTemplateCompiler {
 	private $for_count = 0;
 	
 	/**
-	 * Compiles {for [$key, ]$value in $array}
+	 * Compiles {for [$key, ]$value in $array}.
 	 * 
-	 * @param string $args for arguments
-	 * @return string php-for code
+	 * @param string $args Arguments of the {for} block
+	 * @return string The compiled code
 	 */
 	public function compile_for($args) {
 		$matches = array();
@@ -363,9 +362,9 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Compiles {/for}
+	 * Compiles {/for}.
 	 * 
-	 * @return string php-endforeach code
+	 * @return string The compiled code
 	 */
 	public function compile_for_close() {
 		$this->for_count--;
@@ -373,34 +372,34 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Compiles {empty}
+	 * Compiles {empty}.
 	 * 
 	 * {empty} is to use right after a {for} node.
 	 * Its content is displayed when the array iterated in the loop is empty.
 	 * 
-	 * @return string php-empty code
+	 * @return string The compiled code
 	 */
 	public function compile_empty() {
 		return "<?php if (isset(\$hidden_counter".($this->for_count+1).") && intval(\$hidden_counter".($this->for_count+1).") == 0): ?>";
 	}
 	
 	/**
-	 * Compiles {/empty}
+	 * Compiles {/empty}.
 	 * 
-	 * @return string php-empty_close code
+	 * @return string The compiled code
 	 */
 	public function compile_empty_close() {
 		return "<?php endif; ?>";
 	}
 	
 	/**
-	 * Compiles an assignment
+	 * Compiles an assignment.
 	 * 
 	 * <code>{set $a = 5}
 	 * {set {$a} = {$a} + 1}</code>
 	 * 
-	 * @param string $args an assignment <code>var=value</code>
-	 * @return string the php-assignment code
+	 * @param string $args An assignment <code>var = value</code>
+	 * @return string The compiled code
 	 */
 	public function compile_set($args) {
 		$first_equal_pos = strpos($args, '=');
