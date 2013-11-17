@@ -36,9 +36,9 @@ class WTemplate {
 	private $compiler;
 	
 	/**
-	 * Setup template engine
+	 * Setups template engine.
 	 * 
-	 * @param string $baseDir script root directory
+	 * @param string $baseDir    script root directory
 	 * @param string $compileDir optional compilation directory
 	 * @throws Exception
 	 */
@@ -57,7 +57,7 @@ class WTemplate {
 	}
 	
 	/**
-	 * Sets the compile directory
+	 * Sets the compile directory.
 	 * 
 	 * @param string $compileDir Compile directory
 	 * @return bool Returns true if the compile directory was sucessfully setup.
@@ -86,7 +86,7 @@ class WTemplate {
 	}
 	
 	/**
-	 * Changes the variables context in WTemplate
+	 * Changes the variables context in WTemplate.
 	 * 
 	 * If context is changed, next parsed file's variables won't overwrite previous variables.
 	 */
@@ -107,7 +107,7 @@ class WTemplate {
 	}
 	
 	/**
-	 * Come back to previous context
+	 * Come back to previous context.
 	 */
 	public function popContext() {
 		// Count the number of contexts created
@@ -124,10 +124,11 @@ class WTemplate {
 	}
 	
 	/**
-	 * Adds variables whose names are in names and their values to the private property $tpl_vars
+	 * Adds variables whose names are given in $names and their values to the private property $tpl_vars.
 	 * 
-	 * @param array|string $names
-	 * @param array|mixed $values
+	 * @param array|string $names  Either the name of the variable to assign, or an array(name => value).
+	 * @param mixed        $values Value
+	 * @param bool         $global Is the variable global?
 	 */
 	public function assign($names, $values = null, $global = false) {
 		if (is_array($names)) {
@@ -145,10 +146,10 @@ class WTemplate {
 	}
 	
 	/**
-	 * Adds values in a variable if exists
+	 * Appends given values in a variable, if it exists. Otherwise, initializes it.
 	 * 
-	 * @param string    $var    variable name
-	 * @param mixed     $value  value to append
+	 * @param string $var   variable name
+	 * @param mixed  $value value to append
 	 */
 	public function append($var, $value) {
 		if (isset($this->tpl_vars[$var])) {
@@ -162,10 +163,10 @@ class WTemplate {
 	}
 	
 	/**
-	 * Returns the variable value
+	 * Returns the variable value.
 	 * 
-	 * @param string $var variable name
-	 * @return mixed variable value or '' if it is not set
+	 * @param string $var Variable's name
+	 * @return mixed Variable value or '' if it is not set
 	 */
 	public function getVar($var) {
 		if (isset($this->tpl_vars[$var])) {
@@ -176,9 +177,9 @@ class WTemplate {
 	}
 	
 	/**
-	 * Removes template variables
+	 * Removes template variables.
 	 * 
-	 * @param array|string $vars variable name or list of variable names to clear
+	 * @param array|string $vars Variable's name or list of variables's names to clear
 	 */
 	public function clear($vars) {
 		if (is_array($vars)) {
@@ -191,10 +192,10 @@ class WTemplate {
 	}
 	
 	/**
-	 * Gets the resulting output of a compiled file without printing anything on screen
+	 * Gets the resulting output of a compiled file without printing anything on screen.
 	 * 
-	 * @param string $href file's href
-	 * @return string output string
+	 * @param string $href File's href
+	 * @return string Output string
 	 * @throws Exception
 	 */
 	public function parse($href) {
@@ -228,9 +229,9 @@ class WTemplate {
 	}
 	
 	/**
-	 * Displays a file on the screen
+	 * Displays a compiled file on the screen.
 	 * 
-	 * @param string $href file's href
+	 * @param string $href File's href
 	 */
 	public function display($href) {
 		// Display parsing result
