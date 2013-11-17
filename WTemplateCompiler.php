@@ -16,7 +16,7 @@ defined('IN_WITY') or die('Access denied');
  * In this case, "exemple" is the name of the node.
  * For a closing node, such as <code>{/exemple}</code>, the node name is "exemple_close".
  *
- * @package System\WTemplate
+ * @package WTemplate
  * @author Johan Dufau <johan.dufau@creatiwity.net>
  * @version 0.4.0-22-11-2012
  */

@@ -8,7 +8,7 @@ defined('IN_WITY') or die('Access denied');
 /**
  * WTemplateFile is the template file manager.
  *
- * @package System\WTemplate
+ * @package WTemplate
  * @author Johan Dufau <johan.dufau@creatiwity.net>
  * @version 0.4.0-04-08-2012
  */

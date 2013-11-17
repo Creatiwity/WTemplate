@@ -12,7 +12,7 @@ require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateCompiler.php';
 /**
  * WTemplate is the template engine used by WityCMS.
  * 
- * @package System\WTemplate
+ * @package WTemplate
  * @author Johan Dufau <johan.dufau@creatiwity.net>
  * @version 0.4.0-26-10-2012
  */
