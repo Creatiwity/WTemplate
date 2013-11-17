@@ -3,8 +3,6 @@
  * WTemplateParser.php
  */
 
-defined('IN_WITY') or die('Access denied');
-
 /**
  * WTemplateParser is the parser part of WTemplate.
  *

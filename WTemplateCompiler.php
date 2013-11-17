@@ -3,8 +3,6 @@
  * WTemplateCompiler.php
  */
 
-defined('IN_WITY') or die('Access denied');
-
 /**
  * WTemplateCompiler compiles the nodes used in templates parsed by WTemplate.
  * 

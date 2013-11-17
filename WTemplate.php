@@ -3,8 +3,6 @@
  * WTemplate.php
  */
 
-defined('IN_WITY') or die('Access denied');
-
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateFile.php';
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateParser.php';
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateCompiler.php';

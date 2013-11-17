@@ -3,8 +3,6 @@
  * WTemplateFile.php
  */
 
-defined('IN_WITY') or die('Access denied');
-
 /**
  * WTemplateFile is the template file manager.
  *
