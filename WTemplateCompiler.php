@@ -303,7 +303,7 @@ class WTemplateCompiler {
 	}
 	
 	/**
-	 * Compiles {elseif ...}.
+	 * Compiles {elseif}.
 	 * 
 	 * @param string $args Arguments within the {elseif} node
 	 * @return string The compiled code
