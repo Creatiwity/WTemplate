@@ -208,12 +208,19 @@ class WTemplate {
 		// Buffer
 		ob_start();
 		
+		// Define a soft handler for undfined variables
+		set_error_handler(function($errno, $errstr, $errfile, $errline) {
+			echo $errstr;
+		}, E_NOTICE);
+		
 		try { // Critical section
 			// Adds the php close balise at the begining because it is a whole php file being evaluated
 			$eval_result = eval('?>'.$code);
 		} catch (Exception $e) {
 			// Just stores the exception into $e to throw it later
 		}
+		
+		restore_error_handler();
 		
 		$buffer = ob_get_contents();
 		ob_end_clean();
