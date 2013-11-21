@@ -208,9 +208,9 @@ class WTemplate {
 		// Buffer
 		ob_start();
 		
-		// Define a soft handler for undfined variables
+		// Define a soft handler for undefined variables
 		set_error_handler(function($errno, $errstr, $errfile, $errline) {
-			echo $errstr;
+			echo str_replace(array('Undefined index: ', 'Undefined variable: '), 'WT!', $errstr);
 		}, E_NOTICE);
 		
 		try { // Critical section
