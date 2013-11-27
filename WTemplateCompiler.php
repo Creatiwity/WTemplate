@@ -10,9 +10,9 @@
  * one for each known node by WTemplate.</p>
  *
  * <p><strong>What is a node?</strong><br />
- * Each <code>{exemple}</code> is called a "node". In this case, "exemple" is the name of the node.</p>
+ * Each <code>{example}</code> is called a "node". In this case, "example" is the name of the node.</p>
  *
- * <p>For a closing node, such as <code>{/exemple}</code>, the node name is "exemple_close".</p>
+ * <p>For a closing node, such as <code>{/example}</code>, the node name is "exemple_close".</p>
  *
  * @package WTemplate
  * @author Johan Dufau <johan.dufau@creatiwity.net>
@@ -20,19 +20,24 @@
  */
 class WTemplateCompiler {
 	/**
-	 * @var array List of nodes opened to check whether they are properly closed.
+	 * @var array List of nodes opened to check whether they are properly closed
 	 */
 	private $openNodes = array();
 
 	/**
-	 * @var array Some useful information to help the compilation (such as file src, template directory, ...).
+	 * @var array Some useful information to help the compilation (such as file src, template directory, ...)
 	 */
 	private $data = array();
 
 	/**
-	 * @var array List of all registered external compilers  .
+	 * @var array List of all registered external compilers
 	 */
 	private static $external_compilers = array();
+
+	/**
+	 * @var bool Make self::parseVar() compile to local variables
+	 */
+	public static $use_local_vars = false;
 
 	/**
 	 * Registers an external compiler.
@@ -210,8 +215,15 @@ class WTemplateCompiler {
 
 		$var_string = array_shift($functions);
 
-		$return = '$this->tpl_vars';
 		$levels = explode('.', $var_string);
+
+		// In {block}, local variables must be used directly
+		if (self::$use_local_vars) {
+			$return = '$'.array_shift($levels);
+		} else {
+			$return = '$this->tpl_vars';
+		}
+
 		foreach ($levels as $s) {
 			$s = trim($s);
 			if (strpos($s, '$') === 0 || strpos($s, '(') !== false) {
@@ -356,21 +368,20 @@ class WTemplateCompiler {
 			$this->for_count = 0;
 		}
 		$this->for_count++;
+
 		list(,, $key, $value, $array) = $matches;
 
-		$array = trim($array);
-		if (strlen($array) > 0 && $array[0] == '$') {
-			$array = $this->parseVar($array);
-		} else {
-			$array = $this->replaceVars($array);
-		}
+		$array = $this->parseVar($array);
+		$value = $this->parseVar($value);
 
 		$s = "<?php \$hidden_counter".$this->for_count." = 0;\n";
 		if (empty($key)) {
-			$s .= "foreach((array) ".$array." as \$this->tpl_vars['".$value."']):\n";
+			$s .= "foreach((array) ".$array." as ".$value."):\n";
 		} else {
-			$s .= "foreach((array) ".$array." as \$this->tpl_vars['".$key."'] => \$this->tpl_vars['".$value."']):\n";
+			$key = $this->parseVar($key);
+			$s .= "foreach((array) ".$array." as ".$key." => ".$value."):\n";
 		}
+
 		return $s."	\$hidden_counter".$this->for_count."++; ?>";
 	}
 
@@ -381,6 +392,7 @@ class WTemplateCompiler {
 	 */
 	public function compile_for_close() {
 		$this->for_count--;
+
 		return '<?php endforeach; ?>';
 	}
 
@@ -417,7 +429,7 @@ class WTemplateCompiler {
 	public function compile_set($args) {
 		$first_equal_pos = strpos($args, '=');
 		if ($first_equal_pos !== false) {
-			$var = trim(substr($args, 0, $first_equal_pos));
+			$var   = trim(substr($args, 0, $first_equal_pos));
 			$value = trim(substr($args, $first_equal_pos+1));
 
 			if ($var[0] == '$') {
@@ -425,12 +437,120 @@ class WTemplateCompiler {
 			} else {
 				$var = $this->replaceVars(trim($var));
 			}
+
 			$value = $this->replaceVars(trim($value));
 
 			return "<?php ".$var." = ".$value."; ?>";
 		}
 
 		return '';
+	}
+
+	/**
+	 * Compiles {define_block test $a $b}.
+	 * 
+	 * A block is equivalent to a function.
+	 * 
+	 * <code>
+	 *   {define_block test $a}
+	 *     a equals to {$a}
+	 *   {/define_block}
+	 *   {block test 5} // prints "a equals to 5"
+	 * </code>
+	 * 
+	 * @param string $args A block name + arguments
+	 * @return string Beginning of a PHP function code
+	 */
+	public function compile_define_block($args) {
+		self::$use_local_vars = true;
+
+		$array = preg_split('#\s+#', $args);
+
+		$name = array_shift($array);
+
+		$args = implode(', ', $array);
+
+		return '<?php function '.$name.'('.$args.') { ?>';
+	}
+
+	/**
+	 * Compiles {/define_block}
+	 * 
+	 * @return string End of code for define_block opening node
+	 */
+	public function compile_define_block_close() {
+		self::$use_local_vars = false;
+
+		return '<?php } ?>';
+	}
+
+	/**
+	 * Compiles {block test "str1" "str2"}.
+	 * 
+	 * @param string $args Name of the block to trigger + arguments
+	 * @return string Compiled code to trigger the PHP function
+	 */
+	public function compile_block($args) {
+		$args = $this->replaceVars($args);
+
+		$array = preg_split('#\s+#', $args);
+
+		$name = array_shift($array);
+
+		$args = implode(', ', $array);
+
+		return '<?php '.$name.'('.$args.'); ?>';
+	}
+
+	/**
+	 * Compiles {range $i = 0..10}.
+	 * 
+	 * The range node is equivalent to a for loop.
+	 * 
+	 * <code>
+	 *   {set $start = 0}
+	 *   {set $step = 2}
+	 *   {range $i = {$start}.{$step}.10}{$i}{/range} // prints "0 2 4 6 8 10"
+	 * </code>
+	 * 
+	 * @param string $args The counter name + limit of the range
+	 * @return string The compiled code
+	 */
+	public function compile_range($args) {
+		$matches = array();
+		// RegEx string to search "$i = ($start|0).($step|).($end|10)"
+		if (!preg_match('#^\{?(\$[a-zA-Z0-9_]+)\}?\s+=\s+(\{?(\$[a-zA-Z0-9_]+)\}?|[0-9]+)\.(\{?(\$[a-zA-Z0-9_]+)\}?|[0-9]+)?\.(\{?(\$[a-zA-Z0-9_]+)\}?|[0-9]+)\s*$#U', $args, $matches)) {
+			throw new Exception("WTemplateCompiler::compile_for(): Wrong syntax for node {for ".$args."}.");
+		}
+
+		list(, $counter, $start, $start_var, $step, $step_var, $end, $end_var) = $matches;
+
+		if (empty($step)) {
+			$step = 1;
+		}
+
+		$counter = $this->parseVar($counter);
+
+		if (!empty($start_var)) {
+			$start = $this->parseVar($start_var);
+		}
+		if (!empty($step_var)) {
+			$step = $this->parseVar($step_var);
+		}
+		if (!empty($end_var)) {
+			$end = $this->parseVar($end_var);
+		}
+
+		return '<?php for ('.$counter.' = '.$start.'; '.$counter.' <= '.$end.'; '.$counter.' += '.$step.'): ?>';
+	}
+
+	/**
+	 * Compiles {/range}
+	 * 
+	 * @return string Closing code for {range} node
+	 */
+	public function compile_range_close() {
+		return '<?php endfor; ?>';
 	}
 }
 
