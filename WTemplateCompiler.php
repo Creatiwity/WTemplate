@@ -313,7 +313,7 @@ class WTemplateCompiler {
 	 */
 	public function compile_if($args) {
 		// Replace variables in condition
-		$cond = $this->replaceVars(trim($args));
+		$cond = $this->replaceVars($args);
 
 		return '<?php if ('.$cond.'): ?>';
 	}
@@ -360,7 +360,7 @@ class WTemplateCompiler {
 	public function compile_for($args) {
 		$matches = array();
 		// RegEx string to search "$key, $value in $array" substring
-		if (!preg_match('#^(\{?\$([a-zA-Z0-9_]+)\}?,\s*)?\{?\$([a-zA-Z0-9_]+)\}?\s+in\s+(.+)$#U', $args, $matches)) {
+		if (!preg_match('#^(\{?(\$[a-zA-Z0-9_]+)\}?,\s*)?\{?(\$[a-zA-Z0-9_]+)\}?\s+in\s+(.+)$#U', $args, $matches)) {
 			throw new Exception("WTemplateCompiler::compile_for(): Wrong syntax for node {for ".$args."}.");
 		}
 
@@ -371,7 +371,12 @@ class WTemplateCompiler {
 
 		list(,, $key, $value, $array) = $matches;
 
-		$array = $this->parseVar($array);
+		if ($array[0] == '$') {
+			$array = $this->parseVar($array);
+		} else {
+			$array = $this->replaceVars($array);
+		}
+		
 		$value = $this->parseVar($value);
 
 		$s = "<?php \$hidden_counter".$this->for_count." = 0;\n";
@@ -433,12 +438,12 @@ class WTemplateCompiler {
 			$value = trim(substr($args, $first_equal_pos+1));
 
 			if ($var[0] == '$') {
-				$var = $this->parseVar(trim($var));
+				$var = $this->parseVar($var);
 			} else {
-				$var = $this->replaceVars(trim($var));
+				$var = $this->replaceVars($var);
 			}
 
-			$value = $this->replaceVars(trim($value));
+			$value = $this->replaceVars($value);
 
 			return "<?php ".$var." = ".$value."; ?>";
 		}
