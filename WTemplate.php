@@ -24,6 +24,11 @@ class WTemplate {
 	 * @var string Compilation directory: the location to store compiled files.
 	 */
 	private $compileDir;
+	
+	/**
+	 * @var array Keys of global variables.
+	 */
+	private $tpl_vars_global_keys = array();
 
 	/**
 	 * @var array Template variables.
@@ -108,6 +113,12 @@ class WTemplate {
 
 		// Create a new context
 		$this->context[$index] = array();
+		
+		// Copy global vars
+		foreach ($this->tpl_vars_global_keys as $key) {
+			$this->context[$index][$key] = $this->tpl_vars[$key];
+		}
+		
 		$this->tpl_vars = &$this->context[$index];
 	}
 
@@ -137,16 +148,21 @@ class WTemplate {
 	 */
 	public function assign($names, $values = null, $global = false) {
 		if (is_array($names)) {
-			$this->tpl_vars = array_merge($this->tpl_vars, $names);
+			foreach ($names as $name => $value) {
+				$this->assign($name, $value, $global);
+			}
 		} else {
-			if ($global && count($this->context) != 0) { // if no context, use directly $tpl_vars
+			if ($global) {
+				// Declare this name as global
+				$this->tpl_vars_global_keys[] = $names;
+				
 				// For global vars, update value in all contexts
 				foreach ($this->context as $id => $vars) {
 					$this->context[$id][$names] = $values;
 				}
-			} else {
-				$this->tpl_vars[$names] = $values;
 			}
+			
+			$this->tpl_vars[$names] = $values;
 		}
 	}
 
