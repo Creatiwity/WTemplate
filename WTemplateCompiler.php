@@ -524,7 +524,7 @@ class WTemplateCompiler {
 	public function compile_range($args) {
 		$matches = array();
 		// RegEx string to search "$i = ($start|0).($step|).($end|10)"
-		if (!preg_match('#^\{?(\$[a-zA-Z0-9_]+)\}?\s+=\s+(\{?(\$[a-zA-Z0-9_]+)\}?|[0-9]+)\.(\{?(\$[a-zA-Z0-9_]+)\}?|[0-9]+)?\.(\{?(\$[a-zA-Z0-9_]+)\}?|[0-9]+)\s*$#U', $args, $matches)) {
+		if (!preg_match('#^\{?(\$[a-zA-Z0-9_]+)\}?\s+=\s+(\{?(\$[a-zA-Z0-9_\.]+)\}?|[0-9]+)\.(\{?(\$[a-zA-Z0-9_\.]+)\}?|[0-9]+)?\.(\{?(\$[a-zA-Z0-9_\.]+)\}?|[0-9]+)\s*$#U', $args, $matches)) {
 			throw new Exception("WTemplateCompiler::compile_for(): Wrong syntax for node {for ".$args."}.");
 		}
 
