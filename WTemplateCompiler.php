@@ -235,10 +235,33 @@ class WTemplateCompiler {
 
 		// Functions to apply on the variable
 		foreach ($functions as $f) {
-			$f = trim($f);
+			$data = explode(':', $f);
+			
+			$f = trim($data[0]);
+			$args = null;
+			
+			if (isset($data[1])) {
+				$args = $data[1];
+			}
+			
 			switch ($f) {
 				// Add custom functions here:
 				// case 'custom': break;
+				case 'date':
+					$return = 'date('.$args.', '.$return.')';
+					break;
+				
+				case 'date_db':
+					$return = 'date('.$args.', strtotime('.$return.'))';
+					break;
+				
+				case 'strftime':
+					$return = 'strftime('.$args.', '.$return.')';
+					break;
+				
+				case 'strftime_db':
+					$return = 'strftime('.$args.', strtotime('.$return.'))';
+					break;
 
 				default:
 					if (function_exists($f)) {
