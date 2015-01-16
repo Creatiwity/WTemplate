@@ -262,6 +262,10 @@ class WTemplateCompiler {
 				case 'strftime_db':
 					$return = 'strftime('.$args.', strtotime('.$return.'))';
 					break;
+				
+				case 'substr':
+					$return = 'substr('.$return.', '.$args.')';
+					break;
 
 				default:
 					if (function_exists($f)) {
