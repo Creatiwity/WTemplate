@@ -267,6 +267,14 @@ class WTemplateCompiler {
 					$return = 'substr('.$return.', '.$args.')';
 					break;
 
+				case 'explode':
+					$return = 'explode('.$args.', '.$return.')';
+					break;
+
+				case 'implode':
+					$return = 'implode('.$args.', '.$return.')';
+					break;
+
 				default:
 					if (function_exists($f)) {
 						$return = $f.'('.$return.')';
