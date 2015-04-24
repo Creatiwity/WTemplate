@@ -45,7 +45,7 @@ class WTemplateParser {
 				case '\\': // backslash
 					// backslash in a node are always saved since it is up to self::findAllNodes to manage them
 					if ($level > 0) {
-						$tmp .= '\\';
+						$tmp_array[$level] .= '\\';
 					} else {
 						if ($last_char == '\\') {
 							$code .= '\\';
