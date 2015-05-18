@@ -256,11 +256,11 @@ class WTemplateCompiler {
 					break;
 				
 				case 'strftime':
-					$return = 'strftime('.$args.', '.$return.')';
+					$return = 'utf8_encode(strftime('.$args.', '.$return.'))';
 					break;
 				
 				case 'strftime_db':
-					$return = 'strftime('.$args.', strtotime('.$return.'))';
+					$return = 'utf8_encode(strftime('.$args.', strtotime('.$return.')))';
 					break;
 				
 				case 'substr':
@@ -337,7 +337,7 @@ class WTemplateCompiler {
 			$file = str_replace('../', dirname($dir).'/', $file);
 		}
 
-		return '<?php $this->display("'.$file.'"); ?>';
+		return '<?php $this->display("'.$this->replaceVars($file).'"); ?>';
 	}
 
 	/**
