@@ -256,11 +256,11 @@ class WTemplateCompiler {
 					break;
 				
 				case 'strftime':
-					$return = 'utf8_encode(strftime('.$args.', '.$return.'))';
+					$return = 'strftime('.$args.', '.$return.')';
 					break;
 				
 				case 'strftime_db':
-					$return = 'utf8_encode(strftime('.$args.', strtotime('.$return.')))';
+					$return = 'strftime('.$args.', strtotime('.$return.'))';
 					break;
 				
 				case 'substr':
