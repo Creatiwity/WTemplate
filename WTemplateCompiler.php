@@ -267,6 +267,10 @@ class WTemplateCompiler {
 					$return = 'substr('.$return.', '.$args.')';
 					break;
 
+				case 'replace':
+					$return = 'str_replace('.$args.', '.$return.')';
+					break;
+
 				case 'explode':
 					$return = 'explode('.$args.', '.$return.')';
 					break;
