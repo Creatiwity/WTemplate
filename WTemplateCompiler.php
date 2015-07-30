@@ -567,7 +567,7 @@ class WTemplateCompiler {
 			throw new Exception("WTemplateCompiler::compile_for(): Wrong syntax for node {for ".$args."}.");
 		}
 
-		list(, $counter, $start, $start_var, $step, $step_var, $end, $end_var) = $matches;
+		list(, $counter, $start, $start_var, $step, $step_var, $end) = $matches;
 
 		if (empty($step)) {
 			$step = 1;
@@ -581,8 +581,8 @@ class WTemplateCompiler {
 		if (!empty($step_var)) {
 			$step = $this->parseVar($step_var);
 		}
-		if (!empty($end_var)) {
-			$end = $this->parseVar($end_var);
+		if (!empty($matches[7])) {
+			$end = $this->parseVar($matches[7]);
 		}
 
 		return '<?php for ('.$counter.' = '.$start.'; '.$counter.' <= '.$end.'; '.$counter.' += '.$step.'): ?>';
