@@ -252,7 +252,7 @@ class WTemplateCompiler {
 					break;
 				
 				case 'date_db':
-					$return = 'date('.$args.', strtotime('.$return.'))';
+					$return = '((!empty('.$return.') && '.$return.' != "0000-00-00" && '.$return.' != "0000-00-00 00:00:00") ? date('.$args.', strtotime('.$return.')) : "")';
 					break;
 				
 				case 'strftime':
@@ -260,7 +260,7 @@ class WTemplateCompiler {
 					break;
 				
 				case 'strftime_db':
-					$return = 'strftime('.$args.', strtotime('.$return.'))';
+					$return = '((!empty('.$return.') && '.$return.' != "0000-00-00" && '.$return.' != "0000-00-00 00:00:00") ? strftime('.$args.', strtotime('.$return.')) : "")';
 					break;
 				
 				case 'substr':
