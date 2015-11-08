@@ -236,33 +236,33 @@ class WTemplateCompiler {
 		// Functions to apply on the variable
 		foreach ($functions as $f) {
 			$data = explode(':', $f);
-			
+
 			$f = trim($data[0]);
 			$args = null;
-			
+
 			if (isset($data[1])) {
 				$args = $data[1];
 			}
-			
+
 			switch ($f) {
 				// Add custom functions here:
 				// case 'custom': break;
 				case 'date':
 					$return = 'date('.$args.', '.$return.')';
 					break;
-				
+
 				case 'date_db':
 					$return = '((!empty('.$return.') && '.$return.' != "0000-00-00" && '.$return.' != "0000-00-00 00:00:00") ? date('.$args.', strtotime('.$return.')) : "")';
 					break;
-				
+
 				case 'strftime':
 					$return = 'strftime('.$args.', '.$return.')';
 					break;
-				
+
 				case 'strftime_db':
 					$return = '((!empty('.$return.') && '.$return.' != "0000-00-00" && '.$return.' != "0000-00-00 00:00:00") ? strftime('.$args.', strtotime('.$return.')) : "")';
 					break;
-				
+
 				case 'substr':
 					$return = 'substr('.$return.', '.$args.')';
 					break;
@@ -415,7 +415,7 @@ class WTemplateCompiler {
 		} else {
 			$array = $this->replaceVars($array);
 		}
-		
+
 		$value = $this->parseVar($value);
 
 		$s = "<?php \$hidden_counter".$this->for_count." = 0;\n";
@@ -492,16 +492,16 @@ class WTemplateCompiler {
 
 	/**
 	 * Compiles {define_block test $a $b}.
-	 * 
+	 *
 	 * A block is equivalent to a function.
-	 * 
+	 *
 	 * <code>
 	 *   {define_block test $a}
 	 *     a equals to {$a}
 	 *   {/define_block}
 	 *   {block test 5} // prints "a equals to 5"
 	 * </code>
-	 * 
+	 *
 	 * @param string $args A block name + arguments
 	 * @return string Beginning of a PHP function code
 	 */
@@ -519,7 +519,7 @@ class WTemplateCompiler {
 
 	/**
 	 * Compiles {/define_block}
-	 * 
+	 *
 	 * @return string End of code for define_block opening node
 	 */
 	public function compile_define_block_close() {
@@ -530,7 +530,7 @@ class WTemplateCompiler {
 
 	/**
 	 * Compiles {block test "str1" "str2"}.
-	 * 
+	 *
 	 * @param string $args Name of the block to trigger + arguments
 	 * @return string Compiled code to trigger the PHP function
 	 */
@@ -548,15 +548,15 @@ class WTemplateCompiler {
 
 	/**
 	 * Compiles {range $i = 0..10}.
-	 * 
+	 *
 	 * The range node is equivalent to a for loop.
-	 * 
+	 *
 	 * <code>
 	 *   {set $start = 0}
 	 *   {set $step = 2}
 	 *   {range $i = {$start}.{$step}.10}{$i}{/range} // prints "0 2 4 6 8 10"
 	 * </code>
-	 * 
+	 *
 	 * @param string $args The counter name + limit of the range
 	 * @return string The compiled code
 	 */
@@ -590,7 +590,7 @@ class WTemplateCompiler {
 
 	/**
 	 * Compiles {/range}
-	 * 
+	 *
 	 * @return string Closing code for {range} node
 	 */
 	public function compile_range_close() {
