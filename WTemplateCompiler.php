@@ -16,7 +16,7 @@
  *
  * @package WTemplate
  * @author Johan Dufau <johan.dufau@creatiwity.net>
- * @version 0.4.0-22-11-2012
+ * @version 0.5.0-dev-02-01-2015
  */
 class WTemplateCompiler {
 	/**

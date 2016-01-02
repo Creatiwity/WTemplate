@@ -12,7 +12,7 @@ require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateCompiler.php';
  *
  * @package WTemplate
  * @author Johan Dufau <johan.dufau@creatiwity.net>
- * @version 0.4.0-26-10-2012
+ * @version 0.5.0-dev-02-01-2015
  */
 class WTemplate {
 	/**
