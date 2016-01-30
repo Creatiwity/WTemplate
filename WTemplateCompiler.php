@@ -215,6 +215,14 @@ class WTemplateCompiler {
 
 		$var_string = array_shift($functions);
 
+		$var_default = '';
+
+		// Detect if there is a default value for the variable set
+		if (preg_match('/^(.+?)(?:\s+or\s+)(.+?)$/s', $var_string, $matches)) {
+			$var_string = $matches[1];
+			$var_default = $matches[2];
+		}
+
 		$levels = explode('.', $var_string);
 
 		// In {block}, local variables must be used directly
@@ -231,6 +239,11 @@ class WTemplateCompiler {
 			} else {
 				$return .= "['".$s."']";
 			}
+		}
+
+		// Set the default value if there is one
+		if (!empty($var_default)) {
+			$return = '(isset('.$return.') ? '.$return.' : '.$var_default.')';
 		}
 
 		// Functions to apply on the variable
