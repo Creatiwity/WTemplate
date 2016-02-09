@@ -202,7 +202,9 @@ class WTemplateCompiler {
 	 * Parses a variable node into PHP code.
 	 * Vars should have this format: {$var.index1.index2...|function1|function2...}
 	 *
-	 * Nesting vars can be used, such as: {$var1.{$var2.x}}
+	 * Nested vars can be used, such as: {$var1.{$var2.x}}
+	 *
+	 * A default value can be used: {$var or 'Default value'}
 	 *
 	 * @param string $string A string that will be compiled
 	 * @return string The compiled string
