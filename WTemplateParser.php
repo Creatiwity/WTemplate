@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * WTemplateParser.php
  */
@@ -59,6 +59,12 @@ class WTemplateParser {
 				case '%': // comment node
 					if ($level > 0 && $last_char == '{') {
 						$comment = true;
+					} else if ($last_char == '%') {
+						if ($level > 0) {
+							$tmp_array[$level] .= '%';
+						} else {
+							$code .= '%';
+						}
 					}
 					break;
 
