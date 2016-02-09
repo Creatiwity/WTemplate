@@ -120,7 +120,19 @@ class WTemplateCompiler {
 		$output = "";
 
 		// Variable display
-		if (strpos($node, '$') === 0) {
+		// Escaped variable
+		if (substr($node, 0, 2) == '!$' && substr($node, -1) == '!') {
+			$node = trim($node, '!');
+
+			if ($inner_node) {
+				// Inner variables will be treated by compilers
+				$output = '{'.$original_node.'}';
+			} else {
+				$output = $this->compile_var($node, true);
+			}
+		}
+		// Non-escaped variables
+		else if (strpos($node, '$') === 0) {
 			if ($inner_node) {
 				// Inner variables will be treated by compilers
 				$output = '{'.$original_node.'}';
@@ -215,6 +227,14 @@ class WTemplateCompiler {
 
 		$var_string = array_shift($functions);
 
+		$var_default = '';
+
+		// Detect if there is a default value for the variable set
+		if (preg_match('/^(.+?)(?:\s+or\s+)(.+?)$/s', $var_string, $matches)) {
+			$var_string = $matches[1];
+			$var_default = $matches[2];
+		}
+
 		$levels = explode('.', $var_string);
 
 		// In {block}, local variables must be used directly
@@ -231,6 +251,11 @@ class WTemplateCompiler {
 			} else {
 				$return .= "['".$s."']";
 			}
+		}
+
+		// Set the default value if there is one
+		if (!empty($var_default)) {
+			$return = '(isset('.$return.') ? '.$return.' : '.$var_default.')';
 		}
 
 		// Functions to apply on the variable
@@ -305,13 +330,19 @@ class WTemplateCompiler {
 	/**
 	 * Compiles a variable displaying it.
 	 *
-	 * <code>{$array.index1.index2...|func1|func2...}</code>
+	 * <code>{$array.index1.index2...|func1|func2...}</code> for an unescaped variable
+	 * <code>{!$array.index1.index2...|func1|func2...!}</code> for an escaped variable
 	 *
 	 * @param string $args A string of variables that will be compiled
+	 * @param bool $escaped Tell if the var has to be escaped. Default is false.
 	 * @return string The compiled variables
 	 */
-	public function compile_var($args) {
+	public function compile_var($args, $escaped = false) {
 		if (!empty($args)) {
+			if ($escaped) {
+				return '<?php echo htmlentities('.$this->parseVar($args).'); ?>';
+			}
+
 			return '<?php echo '.$this->parseVar($args).'; ?>';
 		}
 

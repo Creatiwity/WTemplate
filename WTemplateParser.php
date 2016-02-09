@@ -72,7 +72,7 @@ class WTemplateParser {
 					if (!$comment) {
 						// Check whether { is backslashed
 						// List of authorized chars to start a node (alphanum, / for closing nodes and $ for var displaying nodes
-						if ($i < $length-1 && preg_match('#[a-zA-Z0-9/$%]#', $string[$i+1]) && $last_char != '\\') {
+						if ($i < $length-1 && preg_match('#[a-zA-Z0-9/$!%]#', $string[$i+1]) && $last_char != '\\') {
 							$level++;
 
 							// Create a new level in the temporary array
