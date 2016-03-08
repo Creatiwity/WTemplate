@@ -342,7 +342,7 @@ class WTemplateCompiler {
 	public function compile_var($args, $escaped = false) {
 		if (!empty($args)) {
 			if ($escaped) {
-				return '<?php echo htmlentities('.$this->parseVar($args).'); ?>';
+				return '<?php echo htmlentities('.$this->parseVar($args).', ENT_QUOTES); ?>';
 			}
 
 			return '<?php echo '.$this->parseVar($args).'; ?>';
