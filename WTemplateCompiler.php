@@ -463,6 +463,30 @@ class WTemplateCompiler {
 	}
 
 	/**
+	 * Compiles {break [$condition]}
+	 *
+	 * @param string $condition The break condition
+	 * @return string The compiled code
+	 */
+	public function compile_break($condition) {
+		$condition = $this->replaceVars($condition);
+
+		return !empty($condition) ? '<?php if('.$condition.'): break; endif; ?>' : '<?php break; ?>';
+	}
+
+	/**
+	 * Compiles {continue [$condition]}
+	 *
+	 * @param string $condition The continue condition
+	 * @return string The compiled code
+	 */
+	public function compile_continue($condition) {
+		$condition = $this->replaceVars($condition);
+
+		return !empty($condition) ? '<?php if('.$condition.'): continue; endif; ?>' : '<?php continue; ?>';
+	}
+
+	/**
 	 * Compiles {/for}.
 	 *
 	 * @return string The compiled code
