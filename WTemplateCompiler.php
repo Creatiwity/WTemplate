@@ -278,6 +278,10 @@ class WTemplateCompiler {
 					$return = 'date('.$args.', '.$return.')';
 					break;
 
+				case 'wdate':
+					$return = $return.'->format('.$args.')';
+					break;
+
 				case 'date_db':
 					$return = '((!empty('.$return.') && '.$return.' != "0000-00-00" && '.$return.' != "0000-00-00 00:00:00") ? date('.$args.', strtotime('.$return.')) : "")';
 					break;
