@@ -232,9 +232,10 @@ class WTemplateCompiler {
 		$var_default = '';
 
 		// Detect if there is a default value for the variable set
-		if (preg_match('/^(.+?)(?:\s+or\s+)(.+?)$/s', $var_string, $matches)) {
+		if (preg_match('/^(.+)(\s+or\s+)(.+)$/s', $var_string, $matches)) {
 			$var_string = $matches[1];
-			$var_default = $matches[2];
+			$or_string = $matches[2];
+			$var_default = $matches[3];
 		}
 
 		$levels = explode('.', $var_string);
@@ -256,7 +257,7 @@ class WTemplateCompiler {
 		}
 
 		// Set the default value if there is one
-		if (!empty($var_default)) {
+		if (!empty($or_string)) {
 			$return = '(isset('.$return.') ? '.$return.' : '.$var_default.')';
 		}
 
