@@ -12,9 +12,15 @@ require_once dirname(__FILE__).DIRECTORY_SEPARATOR.'WTemplateCompiler.php';
  *
  * @package WTemplate
  * @author Johan Dufau <johan.dufau@creatiwity.net>
- * @version 0.6.1-23-11-2016
+ * @version 1.0.0-04-06-2018
  */
 class WTemplate {
+
+	/**
+	 * @var string Version
+	 */
+	public static $version = '1.0.0';
+
 	/**
 	 * @var string Base directory : the base location of the website
 	 */
